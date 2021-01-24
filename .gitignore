@@ -1,0 +1,17 @@
+# ENV
+env/
+src/.env
+
+# FOLDERS
+src/card-utils
+src/cards
+src/fonts
+src/misc
+src/utils
+
+# TEST
+tests/
+
+# MISC FILES
+README.md
+structure.md
