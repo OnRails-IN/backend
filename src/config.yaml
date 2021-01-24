@@ -1,0 +1,6 @@
+dev:
+  DOMAIN: "http://localhost:8000"
+  ES_URI: "http://localhost:9200"
+staging:
+  DOMAIN: "http://localhost:8000"
+  ES_URI: "http://localhost:9200"
