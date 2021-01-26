@@ -1,6 +1,10 @@
-dev:
+development:
+  SECRET_KEY: "SXQncyBvZmZpY2lhbCBvbGQgYnVkZHkh"
   DOMAIN: "http://localhost:8000"
   ES_URI: "http://localhost:9200"
+  REDIS_HOST: "127.0.0.1"
+  REDIS_PORT: 6379
+  REDIS_PASSWORD: "rickfingdalton"
 staging:
   DOMAIN: "http://localhost:8000"
   ES_URI: "http://localhost:9200"
