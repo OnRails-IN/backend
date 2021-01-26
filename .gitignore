@@ -11,6 +11,7 @@ src/utils
 
 # TEST
 tests/
+run.py
 
 # MISC FILES
 README.md
