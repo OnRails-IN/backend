@@ -7,7 +7,11 @@ src/card-utils
 src/cards
 src/fonts
 src/misc
-src/utils
+src/utils/*
+
+# EXCEPTION FILES
+!src/utils/journey.py
+!src/utils/spotting.py
 
 # TEST
 tests/
