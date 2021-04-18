@@ -18,7 +18,7 @@ Functions
 import time
 from elasticsearch import NotFoundError
 
-from elastic import create_or_update_document, list_documents, get_document, update_journey, delete_document
+from .elastic import create_or_update_document, list_documents, get_document, delete_document
 
 INDEX = "user-journeys-" + time.strftime("%Y")
 
@@ -67,7 +67,7 @@ def list_journeys(includeInactive = False):
     """
     try:
         query = {} if includeInactive else { "query": { "term": { "is_active": True } } }
-        global ES, INDEX
+        global INDEX
         search = list_documents(INDEX, query)
         docs = [{ '_id': hit['_id'], **hit['_source'] } for hit in search['hits']]
         return { 'total_docs': len(docs), 'docs': docs }
@@ -102,15 +102,18 @@ def most_recent_journey(username = None):
             query['query'] = { "term": { "username": username } }
         global INDEX
         search = list_documents(INDEX, query)
-        return { '_id': search['hits'][0]['_id'], **search['hits'][0]['_source'] }
+        if len(search['hits']) > 0:
+            return { '_id': search['hits'][0]['_id'], **search['hits'][0]['_source'] }
+        else:
+            return None
 
     except NotFoundError:
         print("No documents found @ most_recent_journey")
-        return False
+        return None
 
     except Exception as e:
         print("Exception @ most_recent_journey\n{}".format(e))
-        return False
+        return None
 
 def get_journey(ID):
     """
