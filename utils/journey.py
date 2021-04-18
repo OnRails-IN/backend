@@ -1,8 +1,25 @@
-import time
-from elasticsearch import Elasticsearch, NotFoundError
+"""
+Journey Utils
+=============
 
-from constants import ES_URI
-ES = Elasticsearch([ ES_URI ])
+All utility functions to manage journey documents in Elasticsearch
+The index user is "user-journeys-<current year>"
+
+Functions
+    - create_journey
+    - list_journeys
+    - most_recent_journey
+    - get_journey
+    - update_journey
+    - add_halt_to_journey
+    - deactivate_journey
+    - delete_journey
+"""
+import time
+from elasticsearch import NotFoundError
+
+from elastic import create_or_update_document, list_documents, get_document, update_journey, delete_document
+
 INDEX = "user-journeys-" + time.strftime("%Y")
 
 def create_journey(ID, body):
@@ -11,9 +28,9 @@ def create_journey(ID, body):
     
     Params:
         ID::str
-            id of the document to be created
+            id for the journey document
         body::dict
-            Body object which is to become the document
+            Object to be stored as journey document
     Returns:
         bool
             If the document is created or not
@@ -27,12 +44,12 @@ def create_journey(ID, body):
             body['timestamp'] = int(time.time())
         if 'is_active' not in body:
             body['is_active'] = True
-        global ES, INDEX
-        ES.index(index = INDEX, id = ID, body = body)
+        global INDEX
+        create_or_update_document(INDEX, ID, body)
         return True
 
     except Exception as e:
-        print("Exception @ create_journey\n{}".format(e))
+        print("Exception @ create_spotting\n{}".format(e))
         return False
 
 def list_journeys(includeInactive = False):
@@ -41,17 +58,17 @@ def list_journeys(includeInactive = False):
 
     Params:
         includeInactive::bool
-            If in active records must be included in the result or not
+            If inactive records must be included in the result or not
     Returns:
         total_docs::int
-            The total number of records retrieved
+            The total number of records
         docs::[dict]
-            The documents retrieved from the ES index
+            The list of documents
     """
     try:
         query = {} if includeInactive else { "query": { "term": { "is_active": True } } }
         global ES, INDEX
-        search = ES.search(query, index = INDEX, _source = True)['hits']
+        search = list_documents(INDEX, query)
         docs = [{ '_id': hit['_id'], **hit['_source'] } for hit in search['hits']]
         return { 'total_docs': len(docs), 'docs': docs }
 
@@ -69,7 +86,7 @@ def most_recent_journey(username = None):
 
     Params:
         username::str
-            If most recent journey of a particular user is required
+            If most recent journey of a particular user
     Returns:
         doc::dict
             The most recent doucment in the ES index
@@ -83,9 +100,9 @@ def most_recent_journey(username = None):
         }
         if username:
             query['query'] = { "term": { "username": username } }
-        global ES, INDEX
-        search = ES.search(query, index = INDEX, _source = True)['hits']
-        return { "_id": search['hits'][0]['_id'], **search['hits'][0]['_source'] }
+        global INDEX
+        search = list_documents(INDEX, query)
+        return { '_id': search['hits'][0]['_id'], **search['hits'][0]['_source'] }
 
     except NotFoundError:
         print("No documents found @ most_recent_journey")
@@ -97,24 +114,25 @@ def most_recent_journey(username = None):
 
 def get_journey(ID):
     """
-    Function to retrieve one document from Elasticsearch
+    Function to get one document from Elasticsearch
 
     Params:
         ID::str
-            id of the document to retrieve
+            id of the journey document
     Returns:
         doc::dict
-            The document retireved from the ES index
+            The document retrieved from ES
     """
     if not ID:
         return False
 
     try:
-        global ES, INDEX
-        ref = ES.get(index = INDEX, id = ID)
+        global INDEX
+        ref = get_document(INDEX, ID)
         return { '_id': ref['_id'], **ref['_source'] }
 
     except NotFoundError:
+        print("No documents found at get_journey")
         return False
 
     except Exception as e:
@@ -123,7 +141,7 @@ def get_journey(ID):
 
 def update_journey(ID, changes):
     """
-    Function to update a document in the Elasticsearch index
+    Function to update a journey document in Elasticsearch
 
     Params:
         ID::str
@@ -140,14 +158,14 @@ def update_journey(ID, changes):
     try:
         if '_id' in changes:
             del changes['_id']
+        global INDEX
         changes['updated_timestamp'] = int(time.time())
-        global ES, INDEX
-        body = ES.get(index = INDEX, id = ID)['_source']
-        body = { **body, **changes }
-        ES.index(index = INDEX, id = ID, body = body)
+        body = get_document(INDEX, ID)['_source']
+        create_or_update_document(INDEX, ID, { **body, **changes })
         return True
 
     except NotFoundError:
+        print("No documents found at update_journey")
         return False
 
     except Exception as e:
@@ -167,22 +185,21 @@ def add_halt_to_journey(ID, haltObj):
         bool
             If the changes have been applied or not
     """
-    if not ID:
-        return False
-    if "station" not in haltObj:
+    if not ID or "station" not in haltObj:
         return False
 
     try:
-        global ES, INDEX
-        body = ES.get(index = INDEX, id = ID)['_source']
+        global INDEX
+        body = get_document(INDEX, ID)['_source']
         if 'halts' in body and haltObj not in body['halts']:
             body['halts'].append(haltObj)
         else:
             body['halts'] = [haltObj]
-        ES.index(index = INDEX, id = ID, body = body)
+        create_or_update_document(INDEX, ID, body)
         return True
 
     except NotFoundError:
+        print("No documents found at add_halt_to_journey")
         return False
 
     except Exception as e:
@@ -195,7 +212,7 @@ def deactivate_journey(ID):
 
     Params:
         ID::str
-            id of the document to update
+            id of the document to deactivate
     Returns:
         bool
             If the changes have been applied or not
@@ -204,15 +221,40 @@ def deactivate_journey(ID):
         return False
 
     try:
-        global ES, INDEX
-        body = ES.get(index = INDEX, id = ID)['_source']
+        global INDEX
+        body = get_document(INDEX, ID)['_source']
         body['is_active'] = False
-        ES.index(index = INDEX, id = ID, body = body)
+        create_or_update_document(INDEX, ID, body)
         return True
 
     except NotFoundError:
+        print("No documents found at deactivate_journey")
         return False
 
     except Exception as e:
         print("Exception @ deactivate_journey\n{}".format(e))
+        return False
+
+def delete_journey(ID):
+    """
+    Function to delete a journey document on Elasticsearch
+
+    Params:
+        ID::str
+            ID of the document to delete
+    Returns:
+        bool
+            If the document is deleted or not
+    """
+    try:
+        global INDEX
+        delete_document(INDEX, ID)
+        return True
+
+    except NotFoundError:
+        print("No documents found at delete_journey")
+        return False
+
+    except Exception as e:
+        print("Exception @ delete_journey\n{}".format(e))
         return False
