@@ -16,7 +16,7 @@ Functions
 import time
 from elasticsearch import NotFoundError
 
-from elastic import create_or_update_document, list_documents, get_document, update_journey, delete_document
+from .elastic import create_or_update_document, list_documents, get_document, delete_document
 
 INDEX = "user-spottings-" + time.strftime("%Y")
 
