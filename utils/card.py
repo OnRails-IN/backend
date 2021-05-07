@@ -11,26 +11,15 @@ sbLight = os.path.join(FONT_PATH, "Sarabun-Light.ttf")
 sbMedium = os.path.join(FONT_PATH, "Sarabun-Medium.ttf")
 sbRegular = os.path.join(FONT_PATH, "Sarabun-Regular.ttf")
 
-def make_date_element(dateString):
+def make_timestamp_element(timestamp):
     tag = etree.Element(
         "text",
-        x = str(COORDINATES['date']['x']),
-        y = str(COORDINATES['date']['y'])
+        x = str(COORDINATES['timestamp']['x']),
+        y = str(COORDINATES['timestamp']['y'])
     )
     tag.set("text-anchor", "start")
     tag.set("class", "subtext black")
-    tag.text = dateString
-    return tag
-
-def make_time_element(timeString):
-    tag = etree.Element(
-        "text",
-        x = str(COORDINATES['time']['x']),
-        y = str(COORDINATES['time']['y'])
-    )
-    tag.set("text-anchor", "start")
-    tag.set("class", "subtext black")
-    tag.text = timeString
+    tag.text = timestamp
     return tag
 
 def make_train_name_element(trainName):
@@ -123,7 +112,7 @@ def make_username_element(username):
         y = str(COORDINATES['username']['y'])
     )
     tag.set("text-anchor", "middle")
-    tag.set("class", "subtext black")
+    tag.set("class", "subtext white")
     tag.text = username
     return tag
 
@@ -132,10 +121,12 @@ def create_spotting_svg(data):
         return None
 
     try:
-        with open(os.path.join(TEMPLATE_PATH, "{}.svg".format(data['loco_type'])), 'r') as file:
+        with open(os.path.join(TEMPLATE_PATH, "{}.svg".format(data['loco_class'])), 'r') as file:
             template = file.read()
 
         xml = etree.XML(template)
+
+        outputFile = os.path.abspath(os.path.join(CARD_PATH, "{}.svg".format(data['_id'])))
 
         styleTag = etree.Element("style")
         styleTag.text = "@font-face {"+"font-family: \"Sarabun\"; src:url({});".format(sbRegular)+"}"+\
@@ -143,10 +134,11 @@ def create_spotting_svg(data):
         "@font-face {"+"font-family: \"Sarabun Light\"; src:url({});".format(sbLight)+"}"+\
         ".title { font-family: \"Sarabun Medium\", sans-serif; font-size: 25px; fill: #FFF}\
         .black { fill: #000 }\
+        .white { fill: #FFF }\
         .head1 { font-family: Sarabun, sans-serif; font-size: 20px; fill: #FFF }\
         .head2 { font-family: Sarabun, sans-serif; font-size: 18px; fill: #FFF }\
         .head3 { font-family: Sarabun, sans-serif; font-size: 16px; fill: #FFF }\
-        .subtext { font-family: Sarabun Light, sans-serif; font-size: 13px; }\
+        .subtext { font-family: Sarabun Light, sans-serif; font-size: 14px; }\
         .center { text-align: center }"
 
         xml.append(styleTag)
@@ -161,17 +153,17 @@ def create_spotting_svg(data):
             xml.append(make_train_number_element(data['train_number']))
         if "train_name" in data:
             xml.append(make_train_name_element(data['train_name']))
-        if "location" in data:
-            xml.append(make_location_element(data['location']))
+        if "spotting_location" in data:
+            xml.append(make_location_element(data['spotting_location']))
 
         xml.append(make_username_element(data['username']))
-        dateString = time.strftime("%b %d, %Y", time.localtime(data['timestamp']))
-        xml.append(make_date_element(dateString))
-        timeString = time.strftime("%H:%M", time.localtime(data['timestamp']))
-        xml.append(make_time_element(timeString))
+        timestamp = time.strftime("%b %d, %Y %H:%M", time.localtime(data['timestamp']))
+        xml.append(make_timestamp_element(timestamp))
 
-        with open(os.path.join(CARD_PATH, "{}.svg".format(data['_id'])), 'w') as file:
+        with open(outputFile, 'w') as file:
             file.write(etree.tostring(xml).decode('utf-8'))
+
+        return outputFile
 
     except Exception as e:
         print("Exception @ create_spotting_svg\n{}".format(e))

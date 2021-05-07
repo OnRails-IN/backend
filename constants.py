@@ -32,8 +32,7 @@ COORDINATES = {
     "loco_shed": { "x": 140, "y": 62 },
     "train_number": { "x": 140, "y": 170 },
     "train_name": { "x": 140, "y": 200 },
-    "username": { "x": 140, "y": 250 },
-    "date": { "x": 5, "y": 250 },
-    "time": { "x": 5, "y": 265 },
+    "username": { "x": 140, "y": 227 },
+    "timestamp": { "x": 5, "y": 250 },
     "location": { "x": 275, "y": 250 }
 }
