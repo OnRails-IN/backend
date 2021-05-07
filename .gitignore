@@ -1,22 +1,28 @@
 # ENV
 env/
-src/.env
+.env
 
 # FOLDERS
-src/card-utils
-src/cards
-src/fonts
-src/misc
-src/utils/*
+card-utils/
+cards/
+misc/
+node_modules
+resources
+
+# CODE FILES
 
 # EXCEPTION FILES
-!src/utils/journey.py
-!src/utils/spotting.py
 
 # TEST
 tests/
 run.py
 
 # MISC FILES
+package-lock.json
 README.md
 structure.md
+*__pycache__
+.config
+config.yaml
+docker-compose*
+handlers.py
