@@ -70,9 +70,9 @@ def signup_user(body):
         if body['username'] in existingUsers:
             # Username already taken
             return False
-        
+
         # TODO: Validate username
-        
+
         body = {
             **body,
             'index': INDEX_KEYS[body['username'][0].lower()], # Create index
@@ -107,7 +107,7 @@ def login_user(username, password):
     try:
         # Validate user
         record = get_record("users", { "username": username, "index": INDEX_KEYS[username[0].lower()] })
-        
+
         if not record:
             return False
         if crypt.decrypt(record['password'].encode()).decode() == password:

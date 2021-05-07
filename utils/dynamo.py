@@ -38,7 +38,7 @@ client = boto3.client(
 def ensure_json(obj):
     """
     Function to ensure that a python object is JSON serializable
-    
+
     Params:
         obj::dict|[dict]
             Object to be JSON serializable
@@ -163,7 +163,7 @@ def create_or_update_record(tableName, record):
             The table name to get the record
         record::dict
             The object to store
-    
+
     Returns:
         bool
             If the record was inserted or not
@@ -266,7 +266,7 @@ def get_record(tableName, query):
         )
         doc = ensure_json(res['Item']) if 'Item' in res else None
         return doc
-    
+
     except client.exceptions.ResourceNotFoundException:
         print("Table does not exist")
         return None

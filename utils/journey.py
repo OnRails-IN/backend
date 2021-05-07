@@ -25,7 +25,7 @@ INDEX = "user-journeys-" + time.strftime("%Y")
 def create_journey(ID, body):
     """
     Function to create a new journey document in Elasticsearch
-    
+
     Params:
         ID::str
             id for the journey document
