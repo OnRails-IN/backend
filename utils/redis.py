@@ -1,3 +1,14 @@
+"""
+Redis Utils
+===========
+
+All utility functions for interactions with redis server
+
+Functions:
+    - set_data
+    - get_data
+    - delete_key
+"""
 import json
 import time
 from redis import Redis
@@ -58,7 +69,7 @@ def get_data(key):
     if not key:
         return None
 
-    try: 
+    try:
         return json.loads(rds.get(key).decode())
 
     except Exception as e:

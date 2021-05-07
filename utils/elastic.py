@@ -1,3 +1,15 @@
+"""
+Elastic Utils
+=============
+
+All utility functions for interactions with Elasticsearch
+
+Functions
+    - create_or_update_document
+    - list_documents
+    - get_document
+    - delete_document
+"""
 from elasticsearch import Elasticsearch, NotFoundError
 
 from constants import ES_URI
