@@ -25,3 +25,15 @@ REDIS_PORT = os.environ.get('REDIS_PORT')
 REDIS_PASSWORD = os.environ.get('REDIS_PASSWORD')
 
 DYNAMO_URL = os.environ.get('DYNAMO_URL')
+
+COORDINATES = {
+    "loco_number": { "x": 140, "y": 123 },
+    "loco_class": { "x": 120, "y": 62 },
+    "loco_shed": { "x": 140, "y": 62 },
+    "train_number": { "x": 140, "y": 170 },
+    "train_name": { "x": 140, "y": 200 },
+    "username": { "x": 140, "y": 250 },
+    "date": { "x": 5, "y": 250 },
+    "time": { "x": 5, "y": 265 },
+    "location": { "x": 275, "y": 250 }
+}
