@@ -34,7 +34,7 @@ def create_spotting(ID, body):
             If the document is created or not
     """
     # Required fields check
-    if not ID or not {'username', 'spotting_category'}.issubset(body):
+    if not ID or not {"username", "spotting_category"}.issubset(body):
         return False
 
     try:
@@ -48,7 +48,7 @@ def create_spotting(ID, body):
 
     except Exception as e:
         print("Exception @ create_spotting\n{}".format(e))
-        return False
+        return None
 
 def list_spottings(includeInactive = False):
     """
@@ -64,15 +64,15 @@ def list_spottings(includeInactive = False):
             The list of documents
     """
     try:
-        query = {} if includeInactive else { 'query': { 'term': { 'is_active': True } } }
+        query = {} if includeInactive else { "query": { "term": { "is_active": True } } }
         global INDEX
         search = list_documents(INDEX, query)
-        docs = [{ '_id': hit['_id'], **hit['_source'] } for hit in search['hits']]
-        return { 'total_docs': len(docs), 'docs': docs }
+        docs = [{ "_id": hit['_id'], **hit['_source'] } for hit in search['hits']]
+        return { "total_docs": len(docs), "docs": docs }
 
     except NotFoundError:
         print("No documents found at list_journeys")
-        return None
+        return False
 
     except Exception as e:
         print("Exception @ list_spottings\n{}".format(e))
@@ -95,7 +95,7 @@ def get_spotting(ID):
     try:
         global INDEX
         ref = get_document(INDEX, ID)
-        return { '_id': ref['_id'], **ref['_source'] }
+        return { "_id": ref['_id'], **ref['_source'] }
 
     except NotFoundError:
         print("No documents found at get_spotting")
@@ -103,7 +103,7 @@ def get_spotting(ID):
 
     except Exception as e:
         print("Exception @ get_spotting\n{}".format(e))
-        return False
+        return None
 
 def update_spotting(ID, changes):
     """
@@ -136,7 +136,7 @@ def update_spotting(ID, changes):
 
     except Exception as e:
         print("Exception @ update_spotting\n{}".format(e))
-        return False
+        return None
 
 def deactivate_spotting(ID):
     """
@@ -165,7 +165,7 @@ def deactivate_spotting(ID):
 
     except Exception as e:
         print("Exception @ deactivate_spotting\n{}".format(e))
-        return False
+        return None
 
 def delete_spotting(ID):
     """
@@ -189,4 +189,4 @@ def delete_spotting(ID):
 
     except Exception as e:
         print("Exception @ delete_spotting\n{}".format(e))
-        return False
+        return None

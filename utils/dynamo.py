@@ -106,7 +106,7 @@ def create_user_table():
 
     except Exception as e:
         print("Exception @ create_user_table\n{}".format(e))
-        return False
+        return None
 
 def create_train_table():
     """
@@ -152,7 +152,7 @@ def create_train_table():
 
     except Exception as e:
         print("Exception @ create_user_table\n{}".format(e))
-        return False
+        return None
 
 def create_or_update_record(tableName, record):
     """
@@ -192,7 +192,7 @@ def create_or_update_record(tableName, record):
 
     except Exception as e:
         print("Exception @ create_or_update_record\n{}".format(e))
-        return False
+        return None
 
 def list_tables():
     """
@@ -207,7 +207,7 @@ def list_tables():
 
     except client.exceptions.ResourceNotFoundException:
         print("Tables do not exist")
-        return None
+        return False
 
     except Exception as e:
         print("Exception @ list_tables\n{}".format(e))
@@ -225,7 +225,7 @@ def list_records(tableName):
             The list of records stored in the table
     """
     if not tableName:
-        return None
+        return False
 
     try:
         table = ddb.Table(tableName)
@@ -238,7 +238,7 @@ def list_records(tableName):
 
     except client.exceptions.ResourceNotFoundException:
         print("Table does not exist")
-        return None
+        return False
 
     except Exception as e:
         print("Exception @ list_records\n{}".format(e))
@@ -258,7 +258,7 @@ def get_record(tableName, query):
             The record retrieved from the table
     """
     if not tableName or not query or not isinstance(query, dict):
-        return None
+        return False
 
     try:
         res = ddb.Table(tableName).get_item(
@@ -269,7 +269,7 @@ def get_record(tableName, query):
 
     except client.exceptions.ResourceNotFoundException:
         print("Table does not exist")
-        return None
+        return False
 
     except Exception as e:
         print("Exception @ get_record\n{}".format(e))
@@ -299,7 +299,7 @@ def delete_table(tableName):
 
     except Exception as e:
         print("Exception @ delete_table\n{}".format(e))
-        return False
+        return None
 
 def delete_record(tableName, query):
     """
@@ -330,7 +330,7 @@ def delete_record(tableName, query):
 
     except Exception as e:
         print("Exception @ delete_record\n{}".format(e))
-        return False
+        return None
 
 def check_active(tableName):
     """
@@ -357,4 +357,4 @@ def check_active(tableName):
 
     except Exception as e:
         print("Exception @ check_status\n{}".format(e))
-        return False
+        return None

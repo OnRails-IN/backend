@@ -36,7 +36,7 @@ def create_journey(ID, body):
             If the document is created or not
     """
     # Required fields check
-    if not ID or not body or not {'username', 'train_number', 'from'}.issubset(body):
+    if not ID or not body or not {"username", "train_number", "from"}.issubset(body):
         return False
 
     try:
@@ -50,7 +50,7 @@ def create_journey(ID, body):
 
     except Exception as e:
         print("Exception @ create_spotting\n{}".format(e))
-        return False
+        return None
 
 def list_journeys(includeInactive = False):
     """
@@ -69,12 +69,12 @@ def list_journeys(includeInactive = False):
         query = {} if includeInactive else { "query": { "term": { "is_active": True } } }
         global INDEX
         search = list_documents(INDEX, query)
-        docs = [{ '_id': hit['_id'], **hit['_source'] } for hit in search['hits']]
-        return { 'total_docs': len(docs), 'docs': docs }
+        docs = [{ "_id": hit['_id'], **hit['_source'] } for hit in search['hits']]
+        return { "total_docs": len(docs), "docs": docs }
 
     except NotFoundError:
         print("No documents found at list_journeys")
-        return None
+        return False
 
     except Exception as e:
         print("Exception @ list_journeys\n{}".format(e))
@@ -103,13 +103,13 @@ def most_recent_journey(username = None):
         global INDEX
         search = list_documents(INDEX, query)
         if len(search['hits']) > 0:
-            return { '_id': search['hits'][0]['_id'], **search['hits'][0]['_source'] }
+            return { "_id": search['hits'][0]['_id'], **search['hits'][0]['_source'] }
         else:
-            return None
+            return False
 
     except NotFoundError:
         print("No documents found @ most_recent_journey")
-        return None
+        return False
 
     except Exception as e:
         print("Exception @ most_recent_journey\n{}".format(e))
@@ -132,7 +132,7 @@ def get_journey(ID):
     try:
         global INDEX
         ref = get_document(INDEX, ID)
-        return { '_id': ref['_id'], **ref['_source'] }
+        return { "_id": ref['_id'], **ref['_source'] }
 
     except NotFoundError:
         print("No documents found at get_journey")
@@ -140,7 +140,7 @@ def get_journey(ID):
 
     except Exception as e:
         print("Exception @ get_journey\n{}".format(e))
-        return False
+        return None
 
 def update_journey(ID, changes):
     """
@@ -173,7 +173,7 @@ def update_journey(ID, changes):
 
     except Exception as e:
         print("Exception @ update_journey\n{}".format(e))
-        return False
+        return None
 
 def add_halt_to_journey(ID, haltObj):
     """
@@ -207,7 +207,7 @@ def add_halt_to_journey(ID, haltObj):
 
     except Exception as e:
         print("Exception @ add_halt_to_journey\n{}".format(e))
-        return False
+        return None
 
 def deactivate_journey(ID):
     """
@@ -236,7 +236,7 @@ def deactivate_journey(ID):
 
     except Exception as e:
         print("Exception @ deactivate_journey\n{}".format(e))
-        return False
+        return None
 
 def delete_journey(ID):
     """
@@ -260,4 +260,4 @@ def delete_journey(ID):
 
     except Exception as e:
         print("Exception @ delete_journey\n{}".format(e))
-        return False
+        return None

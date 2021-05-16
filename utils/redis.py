@@ -33,9 +33,9 @@ def set_data(data, key = None):
 
     """
     if not data:
-        return None
+        return False
     if not isinstance(data, dict) and not isinstance(data, list):
-        return None
+        return False
 
     try:
         if key is not None and key:
@@ -67,7 +67,7 @@ def get_data(key):
             The data stored in the key
     """
     if not key:
-        return None
+        return False
 
     try:
         return json.loads(rds.get(key).decode())
@@ -96,4 +96,4 @@ def delete_key(key):
 
     except Exception as e:
         print("Exception @ delete_key\n{}".format(e))
-        return False
+        return None

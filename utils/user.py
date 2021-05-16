@@ -49,7 +49,7 @@ def validate_cache(cacheKey, username = None):
 
     except Exception as e:
         print("Exception @ validate_cache\n{}".format(e))
-        return False
+        return None
 
 def signup_user(body):
     """
@@ -62,7 +62,7 @@ def signup_user(body):
         bool
             If the new user was created or not
     """
-    if not body or not {'username', 'password'}.issubset(body):
+    if not body or not {"username", "password"}.issubset(body):
         return False
 
     try:
@@ -75,9 +75,9 @@ def signup_user(body):
 
         body = {
             **body,
-            'index': INDEX_KEYS[body['username'][0].lower()], # Create index
-            'password': crypt.encrypt(body['password'].encode()).decode(), # Encrypt password
-            'created_timestamp': int(time.time()) # Creation timestamp
+            "index": INDEX_KEYS[body['username'][0].lower()], # Create index
+            "password": crypt.encrypt(body['password'].encode()).decode(), # Encrypt password
+            "created_timestamp": int(time.time()) # Creation timestamp
         }
         if not create_or_update_record("users", body):
             return False
@@ -119,13 +119,12 @@ def login_user(username, password):
             }
             # Return cache key & expiry
             return { "key": set_data(cacheObj), "expiry_timestamp": cacheObj['expiry_timestamp'] }
-
         else:
             return False
 
     except Exception as e:
         print("Exception @ login_user\n{}".format(e))
-        return False
+        return None
 
 def logout_user(username):
     """
@@ -146,7 +145,7 @@ def logout_user(username):
 
     except Exception as e:
         print("Exception @ logout_user\n{}".format(e))
-        return False
+        return None
 
 def existing_users():
     """
@@ -167,7 +166,7 @@ def existing_users():
 
     except Exception as e:
         print("Exception @ existing_users\n{}".format(e))
-        return False
+        return None
 
 def cache_existing_users():
     """
@@ -185,4 +184,4 @@ def cache_existing_users():
 
     except Exception as e:
         print("Exception @ cache_existing_users\n{}".format(e))
-        return False
+        return None
