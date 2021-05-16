@@ -3,11 +3,9 @@ env/
 .env
 
 # FOLDERS
-card-utils/
 cards/
-misc/
 node_modules
-resources
+handlers
 
 # CODE FILES
 
@@ -23,6 +21,3 @@ README.md
 structure.md
 *__pycache__
 .config
-config.yaml
-docker-compose*
-handlers.py
