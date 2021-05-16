@@ -1,0 +1,20 @@
+{
+  "name": "onrails-backend",
+  "version": "1.0.0",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/OnRails-IN/backend.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/OnRails-IN/backend/issues"
+  },
+  "homepage": "https://github.com/OnRails-IN/backend#readme",
+  "dependencies": {
+    "serverless": "^2.41.2"
+  }
+}
