@@ -105,6 +105,41 @@ def get_spotting(ID):
         print("Exception @ get_spotting\n{}".format(e))
         return None
 
+def most_recent_spotting(username = None):
+    """
+    Function to retrieve most recent spotting document from Elasticsearch
+
+    Params:
+        username::str
+            If most recent spotting of a particular user
+    Returns:
+        doc::dict
+            The most recent doucment in the ES index
+    """
+    try:
+        query = {
+            "sort": [
+                { "timestamp": "desc" }
+            ],
+            "size": 1
+        }
+        if username:
+            query['query'] = { "term": { "username": username } }
+        global INDEX
+        search = list_documents(INDEX, query)
+        if len(search['hits']) > 0:
+            return { "_id": search['hits'][0]['_id'], **search['hits'][0]['_source'] }
+        else:
+            return False
+
+    except NotFoundError:
+        print("No documents found @ most_recent_spotting")
+        return False
+
+    except Exception as e:
+        print("Exception @ most_recent_spotting\n{}".format(e))
+        return None
+
 def update_spotting(ID, changes):
     """
     Function to update a spotting document in Elasticsearch
